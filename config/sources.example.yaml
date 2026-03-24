@@ -1,0 +1,98 @@
+timezone: Asia/Seoul
+
+sources:
+  - id: kernel_releases
+    enabled: true
+    adapter: kernel_org_releases
+    url: https://www.kernel.org/releases.json
+    poll_every: 10m
+    max_entries: 10
+    family: linux
+    notify_policy: digest
+
+  - id: linux_cve_announce
+    enabled: true
+    adapter: lore_list
+    list_url: https://lore.kernel.org/linux-cve-announce/
+    poll_every: 10m
+    max_entries: 20
+    family: linux
+    default_kind: cve
+    notify_policy: immediate
+
+  - id: linux_stable
+    enabled: true
+    adapter: lore_list
+    list_url: https://lore.kernel.org/stable/
+    poll_every: 20m
+    max_entries: 20
+    family: linux
+    default_kind: patch
+    notify_policy: digest
+
+  - id: linux_lkml
+    enabled: true
+    adapter: lore_list
+    list_url: https://lore.kernel.org/lkml/
+    poll_every: 30m
+    max_entries: 20
+    family: linux
+    default_kind: patch
+    notify_policy: digest
+
+  - id: android_bulletin_overview
+    enabled: true
+    adapter: android_bulletin_index
+    url: https://source.android.com/docs/security/bulletin/asb-overview
+    poll_every: 6h
+    max_entries: 3
+    family: android
+    default_kind: bulletin
+    notify_policy: immediate
+
+  - id: android_common_kernel
+    enabled: false
+    adapter: gitiles_log
+    repo_url: https://android.googlesource.com/kernel/common
+    poll_every: 60m
+    max_entries: 20
+    family: android
+    default_kind: commit
+    branches:
+      - android-mainline
+    notify_policy: digest
+
+keyword_rules:
+  confirmed_security:
+    sources:
+      - linux_cve_announce
+      - android_bulletin_overview
+
+  security_candidate_high:
+    subject_or_body_any:
+      - CVE-
+      - use-after-free
+      - out-of-bounds
+      - overflow
+      - type confusion
+      - privilege escalation
+      - arbitrary write
+      - refcount
+      - exploit
+
+  security_candidate_medium:
+    subject_or_body_any:
+      - "Fixes:"
+      - "Cc: stable"
+      - binder
+      - netfilter
+      - io_uring
+      - credentials
+      - mm/
+      - fs/
+
+delivery:
+  immediate_score_min: 100
+  digest_score_min: 1
+  digest_cron: "0 9 * * *"
+  smtp_profile: default

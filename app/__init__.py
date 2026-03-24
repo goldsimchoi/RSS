@@ -1,0 +1,1 @@
+"""RSS watcher application package."""

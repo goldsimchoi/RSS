@@ -1,0 +1,26 @@
+severity_buckets:
+  confirmed_security:
+    min_score: 100
+  security_candidate_high:
+    min_score: 60
+  security_candidate_medium:
+    min_score: 1
+
+keywords:
+  confirmed:
+    - CVE-
+  high:
+    - use-after-free
+    - out-of-bounds
+    - overflow
+    - type confusion
+    - privilege escalation
+    - arbitrary write
+    - exploit
+  medium:
+    - "Fixes:"
+    - "Cc: stable"
+    - binder
+    - netfilter
+    - io_uring
+    - credentials
